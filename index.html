@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستودع صانع قصص الأنمي الذكي</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0d0f18;
+            color: #ffffff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #161b28;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #2a344d;
+        }
+        h1 {
+            text-align: center;
+            color: #ff4757;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #a4b0be;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffa502;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            background: #0f131d;
+            border: 2px solid #2f3640;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+        textarea:focus {
+            border-color: #ff4757;
+            outline: none;
+        }
+        button {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .results-section {
+            margin-top: 30px;
+        }
+        .scene-card {
+            background: #0f131d;
+            border: 1px solid #2f3640;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .scene-card h3 {
+            color: #2ed573;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .scene-text {
+            color: #dfe4ea;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            background: #07090f;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .copy-btn {
+            background: #2f3640;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #ffa502;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎬 صانع ومقسّم برومبتات الأنمي</h1>
+        <p class="subtitle">اكتب قمتك الكبرى أو البرومت الطويل هنا، وسيقوم الموقع بتقسيمه وترتيبه لمشاهد جاهزة للنسخ!</p>
+
+        <label for="longPrompt">أدخل قصتك أو البرومت الطويل هنا (باللغة الإنجليزية يفضل):</label>
+        <textarea id="longPrompt" placeholder="اكتب وصفاً ضخماً لقصة الأنمي الخاصة بك هنا..."></textarea>
+
+        <button onclick="generateScenes()">تقسيم وتحويل إلى مشاهد أنمي 🚀</button>
+
+        <div class="results-section" id="results">
+            </div>
+    </div>
+
+    <script>
+        function generateScenes() {
+            const text = document.getElementById('longPrompt').value.trim();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if(!text) {
+                alert('الرجاء كتابة نص أو برومت أولاً!');
+                return;
+            }
+
+            // تقسيم النص بناء على النقطة أو الفاصلات الكبيرة لعمل مشاهد مقسمة
+            // أو تقسيم النص إلى أجزاء متساوية لتكوين مشهد متسلسل
+            let parts = text.split('.');
+            let scenes = [];
+            let currentScene = "";
+
+            for(let i = 0; i < parts.length; i++) {
+                if(parts[i].trim() !== "") {
+                    currentScene += parts[i].trim() + ". ";
+                    if((i + 1) % 2 === 0 || i === parts.length - 1) {
+                        scenes.push(currentScene);
+                        currentScene = "";
+                    }
+                }
+            }
+
+            if(scenes.length === 0) {
+                scenes.push(text);
+            }
+
+            // عرض المشاهد بتصميم مرتب مع إضافات أنمي سينمائية
+            scenes.forEach((scene, index) => {
+                let finalPrompt = `2D anime movie style, cel-shaded, masterpiece, ${scene} high quality animation, cinematic lighting`;
+                
+                let card = document.createElement('div');
+                card.className = 'scene-card';
+                card.innerHTML = `
+                    <h3>المشهد رقم (${index + 1})</h3>
+                    <div class="scene-text" id="scene-${index}">${finalPrompt}</div>
+                    <button class="copy-btn" onclick="copyText('scene-${index}')">نسخ البرومت 📋</button>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+
+        function copyText(elementId) {
+            let textElement = document.getElementById(elementId);
+            navigator.clipboard.writeText(textElement.innerText);
+            alert('تم نسخ برومت هذا المشهد بنجاح! ضعه في موقع التوليد 🎯');
+        }
+    </script>
+
+</body>
+</html>
